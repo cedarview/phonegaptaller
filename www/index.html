@@ -149,14 +149,15 @@
 
         function mostrarContactos(){
             var options = new ContactFindOptions();
-            option.filter = document.getElementById("filtroContactos");
+            option.filter = document.getElementById("filtroContactos").val();
             //options.filter   = "María";
-            options.multiple = true;
+            //options.multiple = true;
             // options.desiredFields = [navigator.contacts.fieldType.id];
             // options.hasPhoneNumber = true;
-            var fields       = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.name];
+            var fields = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.name];
             //BUSCAR CONTACTOS
             navigator.contacts.find(fields, onSuccess, onError, options);
+
         }
         function onSuccess(contacts) {
             alert(contacts.length);
