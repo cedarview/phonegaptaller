@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <title>Hello World</title>
+</head>
+
+<body>
+    <div class="app">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <input type="text" id="filtroContactos"> </input>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary" onclick="javascript:hola();" type="button">Mensaje simple</button>
+            </div>
+            <div class="col">
+              <button class="btn btn-primary" onclick="javascript:leerMock(2);" type="button">Servicio load</button>
+            </div>
+              <div class="col">
+              <button class="btn btn-primary" onclick="javascript:leerMock(1);" type="button">Servicio</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <button class="btn btn-primary" onclick="javascript:mostrarContactos();" type="button">Contactos</button>
+            </div>
+            <div class="col">
+              <button class="btn btn-primary" onclick="javascript:checkConnection();" type="button">Conexion</button>
+            </div>
+            <div class="col">
+              3 of 3
+            </div>
+          </div>
+        </div>
+        <!-- resultados -->
+        <div id="result">
+            Resultado aqui
+        </div>
+
+        <table id="tableContactos">
+            <tr>
+                <td>Name</td>
+                <td>CellPhone</td>
+            </tr>
+        </table>
+
+        <!-- Modal -->
+      <div class="modal fade bottom" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <!-- Add class .modal-frame and then add class .modal-bottom (or other classes from list above) to set a position to the modal -->
+            <div class="modal-dialog modal-frame modal-bottom" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row d-flex justify-content-center align-items-center">
+                            <p class="pt-3 pr-2">Datos encontrados</p>
+                            <br>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+        function hola(){
+            alert('hola mundo');
+        }
+        function leerMock(option){
+            if (option == 1) {
+                $.ajax({
+                   url:"http://www.mocky.io/v2/5d39a3df2f000071006ebcf8",
+                   success: function (result){
+                       var htmlResult = "<table class='table' border='1' id='resultado'>";
+                       htmlResult += "<tr>";
+                       htmlResult += "<th>Id</th>";
+                       htmlResult += "<th>Name</th>";
+                       htmlResult += "<th>College</th>";
+                       htmlResult += "</tr>";
+                       for (i in result.students){
+                           htmlResult += "<tr>";
+                           htmlResult += "<td>"+result.students[i].id+"</td>";
+                           htmlResult += "<td>"+result.students[i].name+"</td>";
+                           htmlResult += "<td>"+result.students[i].college+"</td>";
+                           htmlResult += "</tr>";
+                       }
+                       htmlResult += "</table>";
+                       document.getElementById('result').innerHTML= htmlResult;
+
+                   },
+                    statusCode: {
+                        200: function () {
+                            $("#myModal").modal()
+                            //alert('exito con la consulta');
+                        }
+                    }
+                })
+            } else if (option == 2) {
+                $('#result').load('http://www.mocky.io/v2/5d39a3df2f000071006ebcf8');
+            }
+
+        }
+
+        function mostrarContactos(){
+            var options = new ContactFindOptions();
+            option.filter = document.getElementById("filtroContactos");
+            //options.filter   = "María";
+            options.multiple = true;
+            // options.desiredFields = [navigator.contacts.fieldType.id];
+            // options.hasPhoneNumber = true;
+            var fields       = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.name];
+            //BUSCAR CONTACTOS
+            navigator.contacts.find(fields, onSuccess, onError, options);
+        }
+        function onSuccess(contacts) {
+            alert(contacts.length);
+            console.log(contacts.length);
+            var table = document.getElementById("tableContactos");
+            for (var i = 0; i <= contacts.length; i++){
+                var row = table.insertRow(0);
+                var cell1 = table.insertCell(0);
+                var cell2 = table.insertCell(1);
+                cell1.innerHTML = contacts[i].displayName;
+                cell2.innerHTML = contacts[i].phoneNumbers[0];
+            }
+        }
+
+        function onError(contacError) {
+            alert('error con los contactos');
+        }
+
+       function checkConnection() {
+            var networkState = navigator.connection.type;
+
+            var states = {};
+            states[Connection.UNKNOWN]  = 'Unknown connection';
+            states[Connection.ETHERNET] = 'Ethernet connection';
+            states[Connection.WIFI]     = 'WiFi connection';
+            states[Connection.CELL_2G]  = 'Cell 2G connection';
+            states[Connection.CELL_3G]  = 'Cell 3G connection';
+            states[Connection.CELL_4G]  = 'Cell 4G connection';
+            states[Connection.CELL]     = 'Cell generic connection';
+            states[Connection.NONE]     = 'No network connection';
+
+            alert('Connection type: ' + states[networkState]);
+        }
+    </script>
+</body>
+
+</html>
