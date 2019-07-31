@@ -161,6 +161,7 @@
         }
         function onSuccess(contacts) {
             alert(contacts.length);
+            alert("Dentro de onSuccess");
             console.log(contacts.length);
             var table = document.getElementById("tableContactos");
             for (var i = 0; i <= contacts.length; i++){
